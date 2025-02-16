@@ -4,7 +4,8 @@ services:
   mojo-backend-engine:
     build:
       context: .
-      dockerfile: mojobackend.dockerfile  # Make sure this is the correct backend Dockerfile
+      # Correct path to the backend Dockerfile
+      dockerfile: mojobackend.dockerfile
     expose:
       - "3000"
     ports:
@@ -25,7 +26,8 @@ services:
   mojo-frontend-app:
     build:
       context: .
-      dockerfile: mojobuilder.dockerfile  # Make sure this is the correct frontend Dockerfile
+      # Correct path to the frontend Dockerfile
+      dockerfile: mojobuilder.dockerfile
       args:
         - VITE_API_BASE_URL=http://mojo-backend-engine:3000  # INTERNAL Docker network URL
     environment:
