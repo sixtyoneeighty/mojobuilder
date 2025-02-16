@@ -16,7 +16,7 @@ ENV PATH="/home/nonroot/mojobuilder/.venv/bin:$PATH"
 
 # Copy requirements file and install dependencies inside the virtual environment
 COPY requirements.txt /home/nonroot/mojobuilder/
-RUN pip3 install --upgrade pip3 && pip3 install -r requirements.txt
+RUN python3 -m pip install --upgrade pip && pip install -r requirements.txt
 
 # Set permissions
 RUN chown -R nonroot:nonroot /home/nonroot/mojobuilder
