@@ -4,15 +4,15 @@ services:
   mojo-backend-engine:
     build:
       context: .
-      dockerfile: mojobackend.dockerfile
+      dockerfile: mojobackend.dockerfile  # Make sure this is the correct backend Dockerfile
     expose:
       - "3000"
     ports:
       - "3000:3000"
-    networks:
-      - mojo-subnetwork
+    environment:
+      - NODE_ENV=production
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/status || exit 1"]
       interval: 5s
       timeout: 30s
       retries: 5
@@ -25,15 +25,15 @@ services:
   mojo-frontend-app:
     build:
       context: .
-      dockerfile: mojobuilder.dockerfile
+      dockerfile: mojobuilder.dockerfile  # Make sure this is the correct frontend Dockerfile
       args:
-        - VITE_API_BASE_URL=http://localhost:3000 # <---- Change this!
+        - VITE_API_BASE_URL=http://mojo-backend-engine:3000  # INTERNAL Docker network URL
     environment:
-      - VITE_API_BASE_URL=http://localhost:3000
+      - VITE_API_BASE_URL=http://localhost:3000  # External access when running locally
     depends_on:
       - mojo-backend-engine
     expose:
-      - 1337
+      - "1337"
     ports:
       - "1337:1337"
     networks:
@@ -41,7 +41,6 @@ services:
 
 networks:
   mojo-subnetwork:
-    driver: bridge
 
 volumes:
   mojo-backend-dbstore:
