@@ -45,4 +45,4 @@ USER nonroot
 WORKDIR /home/nonroot/client/ui
 
 # Run the application on port 1337
-ENTRYPOINT [ "bun", "run", "dev", "--", "--host", "0.0.0.0", "--port", "1337" ]
+ENTRYPOINT [ "bun", "run", "--", "--host", "0.0.0.0", "--port", "1337" ]
