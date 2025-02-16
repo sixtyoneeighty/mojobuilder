@@ -1,33 +1,44 @@
-FROM debian:12
+FROM python:3.11-slim as builder
 
 # Set working directory
-WORKDIR /home/nonroot/mojobuilder
+WORKDIR /app
 
-# Create a non-root user
-RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/mojobuilder -s /bin/bash nonroot
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y build-essential software-properties-common curl sudo wget git python3 python3-pip python3-venv
+# Create and activate virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Create and activate a virtual environment
-RUN python3 -m venv /home/nonroot/mojobuilder/.venv
-ENV PATH="/home/nonroot/mojobuilder/.venv/bin:$PATH"
+# Copy and install requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -U pip && \
+    pip install --no-cache-dir gunicorn && \
+    pip install --no-cache-dir -r requirements.txt
 
-# Copy requirements file and install dependencies inside the virtual environment
-COPY requirements.txt /home/nonroot/mojobuilder/
-RUN python3 -m pip install --upgrade pip && pip install -r requirements.txt
+FROM python:3.11-slim
 
-# Set permissions
-RUN chown -R nonroot:nonroot /home/nonroot/mojobuilder
-USER nonroot
+WORKDIR /app
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Create non-root user
+RUN useradd -r -s /bin/bash -m -d /app nonroot && \
+    chown -R nonroot:nonroot /app
 
 # Copy application files
-COPY . /home/nonroot/mojobuilder/
+COPY . .
+RUN chown -R nonroot:nonroot /app
 
-# Expose the backend port
+USER nonroot
+
+# Expose the port
 EXPOSE 3000
 
-# Correct CMD to run the Flask app using gunicorn
-# Ensure 'mojo' is replaced with the actual name of your Flask app file (if different)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "mojo.py"]
+# Run the application
+CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "4", "--timeout", "120", "mojo:app"]
