@@ -16,7 +16,7 @@ ENV PATH="/home/nonroot/mojo/.venv/bin:$PATH"
 
 # Install dependencies
 COPY requirements.txt /home/nonroot/mojobuilder/
-RUN UV_HTTP_TIMEOUT=100000 /home/nonroot/.local/bin/uv pip install -r requirements.txt 
+RUN pip3 install -r requirements.txt
 
 RUN playwright install-deps chromium
 RUN playwright install chromium
