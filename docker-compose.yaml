@@ -6,11 +6,11 @@ services:
       context: .
       dockerfile: mojobuilder.dockerfile
     expose:
-      - 3000
+      - 1337
     ports:
-      - "3000:3000"
+      - "1337:1337"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://0.0.0.0:3000/ || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://0.0.0.0:1337/ || exit 1"]
       interval: 5s
       timeout: 30s
       retries: 5
