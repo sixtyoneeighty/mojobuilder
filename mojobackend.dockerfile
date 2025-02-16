@@ -30,4 +30,4 @@ EXPOSE 3000
 
 # Correct CMD to run the Flask app using gunicorn
 # Ensure 'mojo' is replaced with the actual name of your Flask app file (if different)
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "mojo:py"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "mojo:app"]
