@@ -29,4 +29,4 @@ COPY . /home/nonroot/mojobuilder/
 EXPOSE 3000
 
 # Start the application
-CMD ["npx", "bun", "run", "--", "--host", "0.0.0.0", "--port", "3000"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "your_flask_app:app"]
