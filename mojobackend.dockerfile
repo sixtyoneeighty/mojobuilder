@@ -41,4 +41,4 @@ USER nonroot
 EXPOSE 3000
 
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "4", "--timeout", "120", "mojo:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:3000", "--worker-class", "eventlet", "mojo:app"]
