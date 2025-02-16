@@ -1,34 +1,32 @@
 FROM debian:12
-USER root
+
+# Set working directory
 WORKDIR /home/nonroot/mojobuilder
+
+# Create a non-root user
 RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/mojobuilder -s /bin/bash nonroot
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
-
-# setting up python3
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y build-essential software-properties-common curl sudo wget git
-RUN apt-get install -y python3 python3-pip python3-venv
-
-# Create and activate venv
-RUN python3 -m venv /home/nonroot/mojobuilder/.venv
-ENV PATH="/home/nonroot/mojo/.venv/bin:$PATH"
 
 # Install dependencies
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y build-essential software-properties-common curl sudo wget git python3 python3-pip python3-venv
+
+# Create and activate a virtual environment
+RUN python3 -m venv /home/nonroot/mojobuilder/.venv
+ENV PATH="/home/nonroot/mojobuilder/.venv/bin:$PATH"
+
+# Copy requirements file and install dependencies inside the virtual environment
 COPY requirements.txt /home/nonroot/mojobuilder/
-RUN pip3 install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-RUN playwright install-deps chromium
-RUN playwright install chromium
-
-COPY src /home/nonroot/mojobuilder/src
-COPY config.toml /home/nonroot/mojobuilder/
-COPY sample.config.toml /home/nonroot/mojobuilder/
-COPY mojo.py /home/nonroot/mojobuilder/
+# Set permissions
 RUN chown -R nonroot:nonroot /home/nonroot/mojobuilder
-
 USER nonroot
-WORKDIR /home/nonroot/mojobuilder
-RUN mkdir /home/nonroot/mojobuilder/db
-ENTRYPOINT [ "python3", "-m", "mojobuilder" ]
 
+# Copy application files
+COPY . /home/nonroot/mojobuilder/
+
+# Expose the backend port
+EXPOSE 3000
+
+# Start the application
+CMD ["npx", "bun", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3000"]
