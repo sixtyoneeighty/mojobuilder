@@ -1,15 +1,14 @@
 version: "3.9"
 
 services:
-
-mojo-backend-engine:
+  mojo-backend-engine:
     build:
       context: .
       dockerfile: mojobuilder.dockerfile
     expose:
       - 3000
     ports:
-      - 3000:3000
+      - "3000:3000"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://0.0.0.0:3000/ || exit 1"]
       interval: 5s
@@ -30,9 +29,9 @@ mojo-backend-engine:
     depends_on:
       - mojo-backend-engine
     expose:
-      - 3000
+      - 1337
     ports:
-      - 3000:3000
+      - "1337:1337"
     networks:
       - mojo-subnetwork
 
@@ -40,4 +39,4 @@ networks:
   mojo-subnetwork:
 
 volumes:
-  mojobuilder-backend-dbstore:
+  mojo-backend-dbstore:
