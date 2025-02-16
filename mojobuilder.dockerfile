@@ -12,9 +12,9 @@ RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/client -s /bin
 
 # Update system and install dependencies
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y build-essential software-properties-common curl sudo wget git
+    apt-get install -y build-essential software-properties-common curl sudo wget git unzip
 
-# Install Node.js properly (without npm conflict)
+# Install Node.js properly
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm
@@ -24,7 +24,7 @@ RUN curl -fsSL https://bun.sh/install | bash && \
     echo 'export BUN_INSTALL="$HOME/.bun"' >> ~/.bashrc && \
     echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> ~/.bashrc
 
-# Set environment variables for Bun (in case they are needed in the build process)
+# Set environment variables for Bun
 ENV BUN_INSTALL="/root/.bun"
 ENV PATH="${BUN_INSTALL}/bin:${PATH}"
 
@@ -44,5 +44,5 @@ RUN chown -R nonroot:nonroot /home/nonroot/client
 USER nonroot
 WORKDIR /home/nonroot/client/ui
 
-# Run the application on port 1337 and expose it to the outside world
+# Run the application on port 1337
 ENTRYPOINT [ "bun", "run", "dev", "--", "--host", "0.0.0.0", "--port", "1337" ]
