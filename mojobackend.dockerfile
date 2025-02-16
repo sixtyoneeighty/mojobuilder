@@ -29,4 +29,4 @@ COPY . /home/nonroot/mojobuilder/
 EXPOSE 3000
 
 # Start the application
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "your_flask_app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:3000", "mojo.py:app"]
