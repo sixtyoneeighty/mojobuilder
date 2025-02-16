@@ -1,7 +1,7 @@
 FROM debian:12
 USER root
-WORKDIR /home/nonroot/devika
-RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/devika -s /bin/bash nonroot
+WORKDIR /home/nonroot/mojobuilder
+RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/mojobuilder -s /bin/bash nonroot
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
@@ -11,23 +11,24 @@ RUN apt-get install -y build-essential software-properties-common curl sudo wget
 RUN apt-get install -y python3 python3-pip python3-venv
 
 # Create and activate venv
-RUN python3 -m venv /home/nonroot/devika/.venv
-ENV PATH="/home/nonroot/devika/.venv/bin:$PATH"
+RUN python3 -m venv /home/nonroot/mojobuilder/.venv
+ENV PATH="/home/nonroot/mojobuilder/.venv/bin:$PATH"
 
 # Install dependencies
-COPY requirements.txt /home/nonroot/devika/
-RUN UV_HTTP_TIMEOUT=100000 /home/nonroot/.local/bin/uv pip install -r requirements.txt 
+RUN pip install -r requirements.txt
+
+RUN UV_HTTP_TIMEOUT=100000 /home/nonroot/.local/bin/pip install -r requirements.txt 
 
 RUN playwright install-deps chromium
 RUN playwright install chromium
 
-COPY src /home/nonroot/devika/src
-COPY config.toml /home/nonroot/devika/
-COPY sample.config.toml /home/nonroot/devika/
-COPY devika.py /home/nonroot/devika/
-RUN chown -R nonroot:nonroot /home/nonroot/devika
+COPY src /home/nonroot/mojobuilder/src
+COPY config.toml /home/nonroot/mojobuilder/
+COPY sample.config.toml /home/nonroot/mojobuilder/
+COPY mojobuilder.py /home/nonroot/mojobuilder/
+RUN chown -R nonroot:nonroot /home/nonroot/mojobuilder
 
 USER nonroot
-WORKDIR /home/nonroot/devika
-RUN mkdir /home/nonroot/devika/db
-ENTRYPOINT [ "python3", "-m", "devika" ]
+WORKDIR /home/nonroot/mojobuilder
+RUN mkdir /home/nonroot/mojobuilder/db
+ENTRYPOINT [ "python3", "-m", "mojobuilder" ]
