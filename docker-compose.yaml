@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: mojobuilder.dockerfile
     args:
-      - VITE_API_BASE_URL=http://mojo-backend-engine:3000
+      - VITE_API_BASE_URL=http://0.0.0.0:1337
     depends_on:
       - mojo-backend-engine
     expose:
