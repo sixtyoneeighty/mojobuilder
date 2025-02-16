@@ -6,11 +6,11 @@ services:
       context: .
       dockerfile: mojobackend.dockerfile
     expose:
-      - 3000
+      - "3000"
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
+    networks:
+      - mojo-subnetwork
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
       interval: 5s
@@ -22,11 +22,20 @@ services:
     networks:
       - mojo-subnetwork
 
+  mojo-mongo-db:
+    image: mongo:6.0.0
+    networks:
+      - mojo-subnetwork
+    volumes:
+      - mojo-backend-dbstore:/data/db
+
   mojo-frontend-app:
     build:
       context: .
       dockerfile: mojobuilder.dockerfile
-    args:
+      args:
+        - VITE_API_BASE_URL=http://localhost:3000 # <---- Change this!
+    environment:
       - VITE_API_BASE_URL=http://localhost:3000
     depends_on:
       - mojo-backend-engine
