@@ -9,7 +9,7 @@ RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/mojobuilder -s
 # Install dependencies
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y build-essential software-properties-common curl sudo wget git python3 python3-pip python3-venv
-
+RUN apt-get install -y nodejs npm
 # Create and activate a virtual environment
 RUN python3 -m venv /home/nonroot/mojobuilder/.venv
 ENV PATH="/home/nonroot/mojobuilder/.venv/bin:$PATH"

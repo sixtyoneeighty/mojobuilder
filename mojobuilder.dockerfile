@@ -13,7 +13,7 @@ RUN groupadd -r nonroot && useradd -r -g nonroot -d /home/nonroot/client -s /bin
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y build-essential software-properties-common curl sudo wget git
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-RUN apt-get install nodejs
+RUN apt-get install -y nodejs npm
 
 # copying mojo app client only
 COPY ui /home/nonroot/client/ui
