@@ -22,13 +22,6 @@ services:
     networks:
       - mojo-subnetwork
 
-  mojo-mongo-db:
-    image: mongo:6.0.0
-    networks:
-      - mojo-subnetwork
-    volumes:
-      - mojo-backend-dbstore:/data/db
-
   mojo-frontend-app:
     build:
       context: .
